@@ -1,6 +1,7 @@
 import { Button, CheckBox, Input } from "@rneui/themed";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import signupSchema from "../../utils/schemas/signup";
 
 const SignupForm = () => {
   const [form, setForm] = useState({
@@ -17,28 +18,14 @@ const SignupForm = () => {
 
   const submit = () => {
     setErrors([]);
-    if (form.firstName.trim().length < 2) {
-      setErrors(old => [...old, "First Name is required!"]);
-    }
-
-    if (form.lastName.trim().length < 2) {
-      setErrors(old => [...old, "Last is required!"]);
-    }
-
-    if (form.password.length < 4) {
-      setErrors(old => [...old, "Password should be more than 5 Char!"]);
-    }
-
-    if (form.password !== form.confirmPassword) {
-      setErrors(old => [...old, "The password and confirm should match!"]);
-    }
-
-    if (errors.length) {
-      return;
-    }
-
-    console.log(form);
-    // submission code
+    signupSchema.validate(form, { abortEarly: false })
+      .then(value => {
+        console.log(value);
+        // submission code
+      })
+      .catch(error => {
+        setErrors(error.errors)
+      })
   }
 
   return (
@@ -120,7 +107,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     padding: 16,
-    alignItems: "center"
+    alignItems: "stretch"
   },
   row: {
     marginBottom: 5
