@@ -2,6 +2,7 @@ import { Button, CheckBox, Input } from "@rneui/themed";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import signupSchema from "../../utils/schemas/signup";
+import { ValidationError } from "yup";
 
 const SignupForm = () => {
   const [form, setForm] = useState({
@@ -14,7 +15,7 @@ const SignupForm = () => {
     gender: 0
   });
 
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const submit = () => {
     setErrors([]);
@@ -24,7 +25,13 @@ const SignupForm = () => {
         // submission code
       })
       .catch(error => {
-        setErrors(error.errors)
+        if (error instanceof ValidationError) {
+          const errorsObject = {};
+          error.inner.forEach(err => {
+            errorsObject[err.path] = err.message
+          });
+          setErrors(errorsObject)
+        }
       })
   }
 
@@ -35,6 +42,7 @@ const SignupForm = () => {
           placeholder="First Name"
           value={form.firstName}
           onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          errorMessage={errors.firstName}
         />
       </View>
       <View style={styles.row}>
@@ -48,6 +56,7 @@ const SignupForm = () => {
         <Input placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
+          errorMessage={errors.email}
         />
       </View>
       <View style={styles.row}>
@@ -55,6 +64,7 @@ const SignupForm = () => {
           placeholder="Mobile Number"
           value={form.mobile}
           onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+          errorMessage={errors.mobile}
         />
       </View>
       <View style={styles.row}>
@@ -63,6 +73,7 @@ const SignupForm = () => {
           placeholder="Password"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
+          errorMessage={errors.password}
         />
       </View>
       <View style={styles.row}>
@@ -71,6 +82,7 @@ const SignupForm = () => {
           placeholder="Verify Password"
           value={form.confirmPassword}
           onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+          errorMessage={errors.confirmPassword}
         />
       </View>
       <View style={styles.row}>
@@ -91,9 +103,6 @@ const SignupForm = () => {
         />
       </View>
       <View style={styles.row}>
-        {errors.map(err => <Text style={styles.error} key={err}>{err}</Text>)}
-      </View>
-      <View style={styles.row}>
         <Button title="Submit" onPress={submit} />
       </View>
     </View>
@@ -111,9 +120,5 @@ const styles = StyleSheet.create({
   },
   row: {
     marginBottom: 5
-  },
-  error: {
-    fontSize: 11,
-    color: 'red'
   }
 });
