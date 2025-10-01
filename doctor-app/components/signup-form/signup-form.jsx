@@ -1,10 +1,12 @@
 import { Button, CheckBox, Input } from "@rneui/themed";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import signupSchema from "../../utils/schemas/signup";
 import { ValidationError } from "yup";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const SignupForm = () => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -12,7 +14,8 @@ const SignupForm = () => {
     mobile: '',
     password: '',
     confirmPassword: '',
-    gender: 0
+    gender: 0,
+    dob: new Date()
   });
 
   const [errors, setErrors] = useState({});
@@ -97,6 +100,14 @@ const SignupForm = () => {
           errorMessage={errors.confirmPassword}
         />
       </View>
+      <TouchableOpacity
+        style={styles.row}
+        accessibilityLabel="Date of birth"
+        onPress={() => { setShowDatePicker(true) }}
+      >
+        <Text>Date of Birth:</Text>
+        <Text>{form.dob.toDateString()}</Text>
+      </TouchableOpacity>
       <View style={styles.row}>
         <Text>Gender</Text>
         <CheckBox
@@ -131,7 +142,20 @@ const SignupForm = () => {
           onPress={() => { setForm({}) }}
         />
       </View>
-    </View>
+      {
+        showDatePicker && (
+          <DateTimePicker
+            value={form.dob}
+            mode="date"
+            onChange={(_, selectedDate) => {
+              const currentDate = selectedDate;
+              setShowDatePicker(false);
+              setForm(old => ({ ...old, dob: currentDate }))
+            }}
+          />
+        )
+      }
+    </View >
   )
 }
 
