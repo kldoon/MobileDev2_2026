@@ -37,8 +37,17 @@ const SignupForm = () => {
 
   return (
     <View style={styles.container}>
+      <Text
+        accessible={true}
+        accessibilityRole="header"
+        style={styles.header}
+      >
+        Signup Form
+      </Text>
       <View style={styles.row}>
         <Input
+          accessible={true}
+          accessibilityLabel="First Name"
           placeholder="First Name"
           value={form.firstName}
           onChange={(e) => setForm({ ...form, firstName: e.target.value })}
@@ -47,13 +56,16 @@ const SignupForm = () => {
       </View>
       <View style={styles.row}>
         <Input
+          accessibilityLabel="Last Name"
           placeholder="Last Name"
           value={form.lastName}
           onChange={(e) => setForm({ ...form, lastName: e.target.value })}
         />
       </View>
       <View style={styles.row}>
-        <Input placeholder="Email"
+        <Input
+          placeholder="Email"
+          accessibilityLabel="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           errorMessage={errors.email}
@@ -93,6 +105,7 @@ const SignupForm = () => {
           checkedIcon="dot-circle-o"
           uncheckedIcon="circle-o"
           title="Male"
+          accessibilityRole="checkbox"
         />
         <CheckBox
           checked={form.gender === 1}
@@ -100,10 +113,23 @@ const SignupForm = () => {
           checkedIcon="dot-circle-o"
           uncheckedIcon="circle-o"
           title="Female"
+          accessibilityRole="checkbox"
         />
       </View>
-      <View style={styles.row}>
-        <Button title="Submit" onPress={submit} />
+      <View
+        style={styles.row}
+        accessible={true}
+      >
+        <Button
+          title="Submit" onPress={submit}
+          accessibilityLabel="Save"
+        />
+        <Button
+          title="Cancel"
+          accessibilityLabel="Cancel"
+          accessibilityHint="This will clear all inputs in the form"
+          onPress={() => { setForm({}) }}
+        />
       </View>
     </View>
   )
@@ -117,6 +143,12 @@ const styles = StyleSheet.create({
     height: "100%",
     padding: 16,
     alignItems: "stretch"
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 10
   },
   row: {
     marginBottom: 5
