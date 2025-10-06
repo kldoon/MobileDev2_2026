@@ -1,13 +1,13 @@
 import { View, Text } from "react-native"
 
-const ViewPatient = () => {
+const AboutApp = () => {
   return (
     <View>
       <Text>
-        ViewPatient
+        About App
       </Text>
     </View>
   )
 }
 
-export default ViewPatient;
+export default AboutApp;

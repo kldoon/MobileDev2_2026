@@ -25,11 +25,12 @@ const Tabs = () => {
                 iconName = tabOpts.focused ? 'account-box-multiple' : 'account-box-multiple-outline';
                 break;
             };
-            return <MaterialCommunityIcons name={iconName} size={24} color={tabOpts.focused ? "blue" : "black"} />
+            return <MaterialCommunityIcons name={iconName} size={24} />
           },
           tabBarActiveTintColor: 'blue',
           tabBarInactiveTintColor: 'gray',
-          animation: 'shift'
+          animation: 'shift',
+          headerShown: false
         }
       }}
     >
