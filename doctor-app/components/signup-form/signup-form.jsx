@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import signupSchema from "../../utils/schemas/signup";
 import { ValidationError } from "yup";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const SignupForm = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -106,23 +107,23 @@ const SignupForm = () => {
         onPress={() => { setShowDatePicker(true) }}
       >
         <Text>Date of Birth:</Text>
-        <Text>{form.dob.toDateString()}</Text>
+        <Text>{form.dob?.toDateString()}</Text>
       </TouchableOpacity>
       <View style={styles.row}>
         <Text>Gender</Text>
         <CheckBox
           checked={form.gender === 0}
           onPress={() => setForm({ ...form, gender: 0 })}
-          checkedIcon="dot-circle-o"
-          uncheckedIcon="circle-o"
+          checkedIcon={<MaterialCommunityIcons name="checkbox-marked" size={22} color="blue" />}
+          uncheckedIcon={<MaterialCommunityIcons name="checkbox-outline" size={22} color="gray" />}
           title="Male"
           accessibilityRole="checkbox"
         />
         <CheckBox
           checked={form.gender === 1}
           onPress={() => setForm({ ...form, gender: 1 })}
-          checkedIcon="dot-circle-o"
-          uncheckedIcon="circle-o"
+          checkedIcon={<MaterialCommunityIcons name="checkbox-marked" size={22} color="blue" />}
+          uncheckedIcon={<MaterialCommunityIcons name="checkbox-outline" size={22} color="gray" />}
           title="Female"
           accessibilityRole="checkbox"
         />
@@ -139,7 +140,7 @@ const SignupForm = () => {
           title="Cancel"
           accessibilityLabel="Cancel"
           accessibilityHint="This will clear all inputs in the form"
-          onPress={() => { setForm({}) }}
+          onPress={() => setForm({})}
         />
       </View>
       {
