@@ -1,23 +1,29 @@
 import { useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native"
-import { PATIENTS } from "../../data/patients";
+import { View, Text, StyleSheet } from "react-native"
+import { getUserById } from "../../services/user.service";
+import { useSQLiteContext } from "expo-sqlite";
 
 const ViewPatient = () => {
+  const db = useSQLiteContext();
   const router = useRoute();
-  const email = router.params["email"] || "";
+  const id = router.params?.["id"] || "";
   const [currentPatient, setCurrentPatient] = useState({});
 
   useEffect(() => {
-    const patient = PATIENTS.find(p => p.email === email);
-    if (patient) {
-      setCurrentPatient(patient);
+    if (id) {
+      const patient = getUserById(db, id);
+      if (patient) {
+        setCurrentPatient(patient);
+      } else {
+        // Homework: Implement an alert input to enter the user id
+      }
     }
-  }, [email]);
+  }, [id]);
 
   return (
-    <View>
-      <Text style={{ fontSize: 25, fontWeight: 700 }}>
+    <View style={styles.container}>
+      <Text style={styles.title}>
         ViewPatient
       </Text>
       <Text>
@@ -40,3 +46,16 @@ const ViewPatient = () => {
 }
 
 export default ViewPatient;
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: 700,
+    marginBottom: 20
+  }
+});

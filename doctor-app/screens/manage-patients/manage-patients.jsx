@@ -1,27 +1,37 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native"
-import { PATIENTS } from "../../data/patients";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
+import { getAllUsers } from "../../services/user.service";
+
+import { useEffect, useState } from "react";
+import { useSQLiteContext } from 'expo-sqlite';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from "@react-navigation/native";
 
 const ManagePatients = () => {
   const navigation = useNavigation();
+  const [patient, setPatients] = useState([]);
+  const db = useSQLiteContext();
+
+  useEffect(() => {
+    const res = getAllUsers(db);
+    setPatients(res);
+  }, [])
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       {
-        PATIENTS.map(item => (
-          <View key={item.email}>
+        patient.map(patient => (
+          <View style={styles.patient} key={patient.email}>
             <Text>
-              {item.firstName} {item.lastName}
+              {patient.firstName} {patient.lastName}
             </Text>
             <Text>
-              {item.dob}
+              {new Date(patient.dob).toLocaleDateString()}
             </Text>
             <Text>
-              {item.gender === 1 ? "Male" : "Female"}
+              {patient.gender === 1 ? "Male" : "Female"}
             </Text>
             <TouchableOpacity onPress={() => {
-              navigation.navigate("ViewPatient", { email: item.email });
+              navigation.navigate("ViewPatient", { id: patient.id });
             }}>
               <MaterialCommunityIcons name="arrow-right-bold-circle-outline" size={24} color="blue" />
             </TouchableOpacity>
@@ -32,4 +42,18 @@ const ManagePatients = () => {
   )
 }
 
-export default ManagePatients
+export default ManagePatients;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16
+  },
+  patient: {
+    borderBottomColor: '#aaa',
+    borderBottomWidth: 2,
+    marginBottom: 10,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
+});

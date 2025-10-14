@@ -1,43 +1,57 @@
 import { Button, CheckBox, Input } from "@rneui/themed";
-import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import signupSchema from "../../utils/schemas/signup";
-import { ValidationError } from "yup";
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const SignupForm = () => {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
-    password: '',
-    confirmPassword: '',
-    gender: 0,
-    dob: new Date()
-  });
+import { useState } from "react";
+import { useSQLiteContext } from 'expo-sqlite';
 
+import { INITIAL_FORM } from "../../data/constants";
+import { ValidationError } from "yup";
+import signupSchema from "../../utils/schemas/signup";
+import { addUser } from "../../services/user.service";
+
+const SignupForm = () => {
+  const db = useSQLiteContext();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
 
-  const submit = () => {
-    setErrors([]);
-    signupSchema.validate(form, { abortEarly: false })
-      .then(value => {
-        console.log(value);
-        // submission code
-      })
-      .catch(error => {
-        if (error instanceof ValidationError) {
-          const errorsObject = {};
-          error.inner.forEach(err => {
-            errorsObject[err.path] = err.message
-          });
-          setErrors(errorsObject)
-        }
-      })
-  }
+  const submit = async () => {
+    setErrors({});
+    try {
+      const value = await signupSchema.validate(form, { abortEarly: false });
+      const userToAdd = { ...value, dob: value.dob.toISOString() };
+      await addUser(db, userToAdd);
+      Alert.alert('Success', 'User added successfully!');
+      setForm(INITIAL_FORM);
+      setErrors({});
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        const errorsObject = {};
+        error.inner.forEach(err => {
+          errorsObject[err.path] = err.message;
+        });
+        setErrors(errorsObject);
+      } else {
+        // Handle other errors (e.g., from addUser)
+        Alert.alert('Error', error.message || 'An error occurred.');
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setForm(INITIAL_FORM);
+    setErrors({});
+  };
+
+  const updateForm = (field, value) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    // Clear error for this field on change
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -54,7 +68,7 @@ const SignupForm = () => {
           accessibilityLabel="First Name"
           placeholder="First Name"
           value={form.firstName}
-          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          onChangeText={(text) => updateForm('firstName', text)}
           errorMessage={errors.firstName}
         />
       </View>
@@ -63,7 +77,8 @@ const SignupForm = () => {
           accessibilityLabel="Last Name"
           placeholder="Last Name"
           value={form.lastName}
-          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          onChangeText={(text) => updateForm('lastName', text)}
+          errorMessage={errors.lastName}
         />
       </View>
       <View style={styles.row}>
@@ -71,7 +86,8 @@ const SignupForm = () => {
           placeholder="Email"
           accessibilityLabel="Email"
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChangeText={(text) => updateForm('email', text)}
+          keyboardType="email-address"
           errorMessage={errors.email}
         />
       </View>
@@ -79,7 +95,8 @@ const SignupForm = () => {
         <Input
           placeholder="Mobile Number"
           value={form.mobile}
-          onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+          onChangeText={(text) => updateForm('mobile', text)}
+          keyboardType="phone-pad"
           errorMessage={errors.mobile}
         />
       </View>
@@ -88,7 +105,7 @@ const SignupForm = () => {
           secureTextEntry={true}
           placeholder="Password"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChangeText={(text) => updateForm('password', text)}
           errorMessage={errors.password}
         />
       </View>
@@ -97,23 +114,23 @@ const SignupForm = () => {
           secureTextEntry={true}
           placeholder="Verify Password"
           value={form.confirmPassword}
-          onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+          onChangeText={(text) => updateForm('confirmPassword', text)}
           errorMessage={errors.confirmPassword}
         />
       </View>
       <TouchableOpacity
         style={styles.row}
         accessibilityLabel="Date of birth"
-        onPress={() => { setShowDatePicker(true) }}
+        onPress={() => setShowDatePicker(true)}
       >
         <Text>Date of Birth:</Text>
-        <Text>{form.dob?.toDateString()}</Text>
+        <Text>{form.dob.toDateString()}</Text>
       </TouchableOpacity>
-      <View style={styles.row}>
+      <View style={styles.genderRow}>
         <Text>Gender</Text>
         <CheckBox
           checked={form.gender === 0}
-          onPress={() => setForm({ ...form, gender: 0 })}
+          onPress={() => updateForm('gender', 0)}
           checkedIcon={<MaterialCommunityIcons name="checkbox-marked" size={22} color="blue" />}
           uncheckedIcon={<MaterialCommunityIcons name="checkbox-outline" size={22} color="gray" />}
           title="Male"
@@ -121,44 +138,42 @@ const SignupForm = () => {
         />
         <CheckBox
           checked={form.gender === 1}
-          onPress={() => setForm({ ...form, gender: 1 })}
+          onPress={() => updateForm('gender', 1)}
           checkedIcon={<MaterialCommunityIcons name="checkbox-marked" size={22} color="blue" />}
           uncheckedIcon={<MaterialCommunityIcons name="checkbox-outline" size={22} color="gray" />}
           title="Female"
           accessibilityRole="checkbox"
         />
       </View>
-      <View
-        style={styles.row}
-        accessible={true}
-      >
+      <View style={styles.row}>
         <Button
-          title="Submit" onPress={submit}
+          title="Submit"
+          onPress={submit}
           accessibilityLabel="Save"
         />
         <Button
           title="Cancel"
+          type="outline"
+          onPress={resetForm}
           accessibilityLabel="Cancel"
           accessibilityHint="This will clear all inputs in the form"
-          onPress={() => setForm({})}
         />
       </View>
-      {
-        showDatePicker && (
-          <DateTimePicker
-            value={form.dob}
-            mode="date"
-            onChange={(_, selectedDate) => {
-              const currentDate = selectedDate;
-              setShowDatePicker(false);
-              setForm(old => ({ ...old, dob: currentDate }))
-            }}
-          />
-        )
-      }
-    </View >
-  )
-}
+      {showDatePicker && (
+        <DateTimePicker
+          value={form.dob}
+          mode="date"
+          display="default"
+          onChange={(_, selectedDate) => {
+            const currentDate = selectedDate || form.dob;
+            setShowDatePicker(false);
+            updateForm('dob', currentDate);
+          }}
+        />
+      )}
+    </View>
+  );
+};
 
 export default SignupForm;
 
@@ -176,6 +191,12 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   row: {
-    marginBottom: 5
+    marginBottom: 16
+  },
+  genderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    flexWrap: 'wrap'
   }
 });
