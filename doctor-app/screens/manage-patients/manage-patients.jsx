@@ -7,14 +7,15 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from "@react-navigation/native";
 
 const ManagePatients = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation();  
   const [patient, setPatients] = useState([]);
   const db = useSQLiteContext();
 
   useEffect(() => {
     const res = getAllUsers(db);
     setPatients(res);
-  }, [])
+  }, []);
+  // Homework: fix the not loading issue
 
   return (
     <ScrollView style={styles.container}>

@@ -15,9 +15,9 @@ const ViewPatient = () => {
       const patient = getUserById(db, id);
       if (patient) {
         setCurrentPatient(patient);
-      } else {
-        // Homework: Implement an alert input to enter the user id
       }
+    } else {
+      // Homework: Implement an alert input to enter the user id
     }
   }, [id]);
 
@@ -26,21 +26,28 @@ const ViewPatient = () => {
       <Text style={styles.title}>
         ViewPatient
       </Text>
-      <Text>
-        {currentPatient.firstName} {currentPatient.lastName}
-      </Text>
-      <Text>
-        {currentPatient.gender === 1 ? "Male" : "Female"}
-      </Text>
-      <Text>
-        {currentPatient.email}
-      </Text>
-      <Text>
-        {currentPatient.dob}
-      </Text>
-      <Text>
-        {currentPatient.mobile}
-      </Text>
+      {
+        currentPatient.id
+          ? <>
+            <Text>
+              {currentPatient.firstName} {currentPatient.lastName}
+            </Text>
+            <Text>
+              {currentPatient.gender === 1 ? "Male" : "Female"}
+            </Text>
+            <Text>
+              {currentPatient.email}
+            </Text>
+            <Text>
+              {currentPatient.dob}
+            </Text>
+            <Text>
+              {currentPatient.mobile}
+            </Text>
+          </>
+          : <Text>No Patent Selected!</Text>
+      }
+
     </View>
   )
 }

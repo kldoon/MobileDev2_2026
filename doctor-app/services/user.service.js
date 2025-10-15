@@ -33,6 +33,7 @@ function getUserById(db, id) {
 /**
  * 
  * @param {SQLiteDatabase} db 
+ * @param {{firstName:string, lastName:string, dob:string}} user 
  * @returns 
  */
 async function addUser(db, user) {
@@ -40,15 +41,16 @@ async function addUser(db, user) {
     await db.runAsync(`
           INSERT INTO users (firstName, lastName, email, mobile, password, gender, dob) 
           VALUES ($firstName, $lastName, $email, $mobile, $password, $gender, $dob)
-        `, {
-      $firstName: user.firstName,
-      $lastName: user.lastName,
-      $email: user.email,
-      $mobile: user.mobile,
-      $password: user.password,
-      $gender: user.gender,
-      $dob: user.dob
-    });
+        `,
+      {
+        $firstName: user.firstName,
+        $lastName: user.lastName,
+        $email: user.email,
+        $mobile: user.mobile,
+        $password: user.password,
+        $gender: user.gender,
+        $dob: user.dob
+      });
   } catch (error) {
     if (error.message.includes('UNIQUE constraint')) {
       Alert.alert('Error', 'Email already exists.');

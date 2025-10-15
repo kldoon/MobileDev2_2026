@@ -10,10 +10,10 @@ export async function initDatabase(db) {
       firstName TEXT NOT NULL,
       lastName TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
-      mobile TEXT NOT NULL,
+      mobile TEXT,
       password TEXT NOT NULL,
       gender INTEGER NOT NULL DEFAULT 0,
-      dob TEXT NOT NULL
+      dob TEXT
     );
   `);
 

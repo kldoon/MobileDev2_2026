@@ -1,8 +1,4 @@
 import { View, Text, StyleSheet } from "react-native"
-import { getAllUsers } from "../../services/user.service";
-
-import { useEffect, useState } from "react";
-import { useSQLiteContext } from 'expo-sqlite';
 
 const Dashboard = () => {
   
