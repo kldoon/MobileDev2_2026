@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AppDrawer from './components/navigation/drawer';
 import { SQLiteProvider } from 'expo-sqlite';
-import { initDatabase } from './utils/db.';
+import { initDatabase } from './utils/db';
 
 export default function App() {
   return (

@@ -7,7 +7,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from "@react-navigation/native";
 
 const ManagePatients = () => {
-  const navigation = useNavigation();  
+  const navigation = useNavigation();
   const [patient, setPatients] = useState([]);
   const db = useSQLiteContext();
 
@@ -31,9 +31,10 @@ const ManagePatients = () => {
             <Text>
               {patient.gender === 1 ? "Male" : "Female"}
             </Text>
-            <TouchableOpacity onPress={() => {
-              navigation.navigate("ViewPatient", { id: patient.id });
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("ViewPatient", { id: patient.id });
+              }}>
               <MaterialCommunityIcons name="arrow-right-bold-circle-outline" size={24} color="blue" />
             </TouchableOpacity>
           </View>
