@@ -22,25 +22,31 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!app) {
-      app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
+      try {
+        app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+      } catch (error) {
+        console.log("An error occured!");
+        console.log(error);
+      }
     }
 
     const q = query(collection(db, 'todos'), orderBy('createdAt', 'desc'));
-
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const todosData = [];
       querySnapshot.forEach((doc) => {
         todosData.push({ id: doc.id, ...doc.data() });
       });
-      console.log('All Todos:', todosData);
       setTodos(todosData);
     }, (error) => {
       console.error('Error fetching todos:', error);
       Alert.alert('Error', 'Failed to fetch todos');
     });
 
-    return () => unsubscribe();
+    return () => {
+      // This code will run when the component is unmounted
+      unsubscribe();
+    };
   }, []);
 
   const addData = async () => {
@@ -50,10 +56,12 @@ const Dashboard = () => {
     }
 
     try {
+      // Insert document (row)
       await addDoc(collection(db, 'todos'), {
         text: todoText,
         priority: 3,
-        createdAt: new Date()
+        createdAt: new Date(),
+        otherfield: "other field!"
       });
       setTodoText('');
     } catch (error) {
@@ -62,12 +70,16 @@ const Dashboard = () => {
     }
   }
 
+  const deleteItem = () => {
+    // Homework implement this
+  }
+
   const renderTodoItem = ({ item }) => <TodoItem item={item} />;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dashboard</Text>
-      
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -75,15 +87,15 @@ const Dashboard = () => {
           value={todoText}
           onChangeText={setTodoText}
         />
-        <Button 
-          title="Add" 
+        <Button
+          title="Add"
           onPress={addData}
           buttonStyle={styles.addButton}
         />
       </View>
 
       <Text style={styles.listTitle}>All Todos ({todos.length})</Text>
-      
+
       <FlatList
         data={todos}
         renderItem={renderTodoItem}
