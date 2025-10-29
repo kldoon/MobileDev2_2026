@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Dashboard from '../../screens/dashboard/dashboard';
+import Todos from '../../screens/todos/todos';
 import AddPatient from '../../screens/add-patient/add-patient';
 import ManagePatients from '../../screens/manage-patients/manage-patients';
 
@@ -17,6 +18,9 @@ const Tabs = () => {
             switch (navOpts.route.name) {
               case "Dashboard":
                 iconName = tabOpts.focused ? 'view-dashboard-variant' : 'view-dashboard-variant-outline';
+                break;
+              case "Todos":
+                iconName = tabOpts.focused ? 'invoice-list' : 'invoice-list-outline';
                 break;
               case "AddPatient":
                 iconName = tabOpts.focused ? 'account-plus' : 'account-plus-outline';
@@ -37,6 +41,10 @@ const Tabs = () => {
       <Tab.Screen
         name="Dashboard"
         component={Dashboard}
+      />
+      <Tab.Screen
+        name="Todos"
+        component={Todos}
       />
       <Tab.Screen
         name="AddPatient"
