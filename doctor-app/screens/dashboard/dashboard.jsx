@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { View, Text, StyleSheet } from "react-native"
-import { getUsers } from "../../services/user-api.services";
+import { createUser, getUsers } from "../../services/user-api.services";
+import { Button } from "@rneui/themed";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -14,9 +15,21 @@ const Dashboard = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Dashboard</Text>
+      <Button title="Add User" onPress={() => {
+        const user = {
+          firstName: "Ahmad",
+          lastName: "Saeed",
+          age: 15,
+          email: 'Ahmad@example.com',
+          password: '123',
+          confirmPassowrd: '123'
+        };
+
+        createUser(user);
+      }} />
       {
         users.map(user => {
-          return <Text>
+          return <Text key={user.id}>
             {user.id}
             /
             {user.name}

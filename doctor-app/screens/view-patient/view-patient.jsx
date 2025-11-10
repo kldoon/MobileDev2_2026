@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native"
+import { View, Text, StyleSheet, Alert } from "react-native"
 import { getUserById } from "../../services/user.service";
 import { useSQLiteContext } from "expo-sqlite";
 
@@ -18,6 +18,12 @@ const ViewPatient = () => {
       }
     } else {
       // Homework: Implement an alert input to enter the user id
+      Alert.prompt("User ID", "Enter user id", (userId) => {
+        const patient = getUserById(db, userId);
+        if (patient) {
+          setCurrentPatient(patient);
+        }
+      })
     }
   }, [id]);
 
@@ -29,6 +35,7 @@ const ViewPatient = () => {
       {
         currentPatient.id
           ? <>
+            <Text>{currentPatient.id}</Text>
             <Text>
               {currentPatient.firstName} {currentPatient.lastName}
             </Text>
