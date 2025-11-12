@@ -4,6 +4,7 @@ import ViewPatient from '../../screens/view-patient/view-patient';
 import AboutApp from '../../screens/about/about';
 import Tabs from './tabs';
 import { TouchableOpacity, Text, View } from 'react-native';
+import TakeImage from '../../screens/take-image/take-image';
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +35,9 @@ const AppDrawer = () => {
               case "ViewPatient":
                 iconName = 'account-box-outline';
                 break;
+              case "TakeImage":
+                iconName = 'camera-outline';
+                break;
               case "About":
                 iconName = 'information-box-outline';
             };
@@ -53,6 +57,11 @@ const AppDrawer = () => {
       <Drawer.Screen
         name="ViewPatient"
         component={ViewPatient}
+      />
+      <Drawer.Screen
+        name="TakeImage"
+        component={TakeImage}
+        options={{ title: "Take Image" }}
       />
       <Drawer.Screen
         name="About"
