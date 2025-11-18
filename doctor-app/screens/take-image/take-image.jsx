@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Image, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { Slider } from '@rneui/themed';
-
+import * as MediaLibrary from 'expo-media-library';
 
 const TakeImage = () => {
   const [facing, setFacing] = useState('back');
   const [permission, requestPermission] = useCameraPermissions();
+  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions({ request: true, writeOnly: true, granularPermissions: ['photo', 'audio'] });
+
   const cameraRef = useRef(null);
   const [photos, setPhotos] = useState([]);
   const [zoom, setZoom] = useState(0);
@@ -31,8 +33,32 @@ const TakeImage = () => {
   }
 
   const takeImage = async () => {
-    const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
-    setPhotos(prev => [photo, ...prev].slice(0, 3));
+    try {
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
+      setPhotos(prev => [photo, ...prev].slice(0, 3));
+
+      if (mediaPermission?.status !== 'granted') {
+        const response = await requestMediaPermission();
+
+        if (!response.granted) {
+          Alert.alert('Permission required', 'Cannot save photo without gallery permission');
+          return;
+        }
+      }
+
+      const asset = await MediaLibrary.createAssetAsync(photo.uri);
+      const album = await MediaLibrary.getAlbumAsync('DoctorApp');
+      if (album == null) {
+        await MediaLibrary.createAlbumAsync('DoctorApp', asset, false);
+      } else {
+        await MediaLibrary.addAssetsToAlbumAsync(asset, album, false);
+      }
+
+      Alert.alert('Saved!', 'Photo saved to your gallery');
+    } catch (error) {
+      console.error('Error saving photo:', error);
+      Alert.alert('Error', 'Failed to save photo');
+    }
   }
 
   return (
