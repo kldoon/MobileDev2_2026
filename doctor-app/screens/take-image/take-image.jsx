@@ -6,24 +6,24 @@ import * as MediaLibrary from 'expo-media-library';
 
 const TakeImage = () => {
   const [facing, setFacing] = useState('back');
-  const [permission, requestPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions({ request: true, writeOnly: true, granularPermissions: ['photo', 'audio'] });
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions({ request: true, granularPermissions: ['photo', 'audio'] });
 
   const cameraRef = useRef(null);
   const [photos, setPhotos] = useState([]);
   const [zoom, setZoom] = useState(0);
 
-  if (!permission) {
+  if (!cameraPermission) {
     // Camera permissions are still loading.
     return <View />;
   }
 
-  if (!permission.granted) {
+  if (!cameraPermission.granted) {
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestCameraPermission} title="grant permission" />
       </View>
     );
   }
@@ -40,17 +40,21 @@ const TakeImage = () => {
       if (mediaPermission?.status !== 'granted') {
         const response = await requestMediaPermission();
 
-        if (!response.granted) {
+        if (!response?.granted) {
           Alert.alert('Permission required', 'Cannot save photo without gallery permission');
           return;
         }
       }
 
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
+
+      // Check if we have album called DcotorApp
       const album = await MediaLibrary.getAlbumAsync('DoctorApp');
       if (album == null) {
+        // If no album then create it and add the photo (asset) to it
         await MediaLibrary.createAlbumAsync('DoctorApp', asset, false);
       } else {
+        // add the photo (asset) to the album (already existing)
         await MediaLibrary.addAssetsToAlbumAsync(asset, album, false);
       }
 
