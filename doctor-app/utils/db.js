@@ -47,6 +47,6 @@ export const initDatabase = async (db) => {
     }
 
   } catch (error) {
-    console.log("Error inserting first item!", err);
+    console.log("Error inserting first item!", error);
   }
 }
