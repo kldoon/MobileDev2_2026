@@ -5,6 +5,7 @@ import AboutApp from '../../screens/about/about';
 import Tabs from './tabs';
 import { TouchableOpacity, Text, View } from 'react-native';
 import TakeImage from '../../screens/take-image/take-image';
+import MyLocation from '../../screens/my-location/my-location';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,6 +39,9 @@ const AppDrawer = () => {
               case "TakeImage":
                 iconName = 'camera-outline';
                 break;
+              case "MyLocation":
+                iconName = 'crosshairs-gps';
+                break;
               case "About":
                 iconName = 'information-box-outline';
             };
@@ -62,6 +66,11 @@ const AppDrawer = () => {
         name="TakeImage"
         component={TakeImage}
         options={{ title: "Take Image" }}
+      />
+      <Drawer.Screen
+        name="MyLocation"
+        component={MyLocation}
+        options={{ title: "Track Location" }}
       />
       <Drawer.Screen
         name="About"
