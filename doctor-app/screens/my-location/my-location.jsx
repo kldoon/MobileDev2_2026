@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
 import { Button } from '@rneui/themed';
 
@@ -7,6 +7,7 @@ const MyLocation = () => {
   const [location, setLocation] = useState(null);
   const [address, setAddress] = useState("");
   const [weather, setWeather] = useState(null);
+  const [weatherIcon, setWeatherIcon] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
 
   const getCurrentLocation = async () => {
@@ -27,8 +28,9 @@ const MyLocation = () => {
       const weatherRes = await fetch(`https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${location.coords.latitude}&location.longitude=${location.coords.longitude}&key=AIzaSyBrD9qK8hpZAbS83FBDJ68NuDdFjzdolXA`);
       const weatherJSON = await weatherRes.json();
       console.log(JSON.stringify(weatherJSON, null, 2));
-      
-      setWeather(weatherJSON.temperature.degrees + '°  _ ' + weatherJSON.wind.speed.value + ' kmH');
+
+      setWeather(weatherJSON.temperature.degrees + '°  _ ' + weatherJSON.wind.speed.value + ' kmH   _ ' + weatherJSON.weatherCondition.description.text);
+      setWeatherIcon(weatherJSON.weatherCondition.iconBaseUri + '_dark.png');
     }
 
   }
@@ -45,6 +47,7 @@ const MyLocation = () => {
       <Text style={styles.paragraph}>{text}</Text>
       <Text style={styles.paragraph}>{address}</Text>
       <Text style={styles.paragraph}>{weather}</Text>
+      {weatherIcon && <Image style={{ width: 70, height: 70 }} source={{ uri: weatherIcon }} />}
       <Button onPress={getCurrentLocation}>Get my location</Button>
     </View>
   );
