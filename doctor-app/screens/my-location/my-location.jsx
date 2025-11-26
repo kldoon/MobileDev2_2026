@@ -19,10 +19,12 @@ const MyLocation = () => {
 
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
+    console.log(location);
+    
     if (location?.coords) {
       const addressRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyBrD9qK8hpZAbS83FBDJ68NuDdFjzdolXA`);
       const addressJSON = await addressRes.json();
-      setAddress(addressJSON.results?.[0].formatted_address);
+      setAddress(addressJSON.results?.[0]?.formatted_address);
       console.log(JSON.stringify(addressJSON, null, 2));
 
       const weatherRes = await fetch(`https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${location.coords.latitude}&location.longitude=${location.coords.longitude}&key=AIzaSyBrD9qK8hpZAbS83FBDJ68NuDdFjzdolXA`);
@@ -45,7 +47,7 @@ const MyLocation = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>{text}</Text>
-      <Text style={styles.paragraph}>{address}</Text>
+      <Text style={styles.paragraph}>{address}</Text> 
       <Text style={styles.paragraph}>{weather}</Text>
       {weatherIcon && <Image style={{ width: 70, height: 70 }} source={{ uri: weatherIcon }} />}
       <Button onPress={getCurrentLocation}>Get my location</Button>

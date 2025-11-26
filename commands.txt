@@ -1,0 +1,12 @@
+
+npx create-expo-app@latest --template blank
+
+npx expo start --tunnel
+
+npm i camera-expo
+or
+npx expo install expo-camera
+
+https://docs.expo.dev/versions/latest/sdk/camera/
+
+
