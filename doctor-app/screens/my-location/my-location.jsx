@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
 import { Button } from '@rneui/themed';
+import MapView from 'react-native-maps';
 
 const MyLocation = () => {
   const [location, setLocation] = useState(null);
@@ -17,10 +18,10 @@ const MyLocation = () => {
       return;
     }
 
-    let location = await Location.getCurrentPositionAsync({});
+    let location = await Location.getCurrentPositionAsync({ accuracy: 10 });
     setLocation(location);
     console.log(location);
-    
+
     if (location?.coords) {
       const addressRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyBrD9qK8hpZAbS83FBDJ68NuDdFjzdolXA`);
       const addressJSON = await addressRes.json();
@@ -46,11 +47,23 @@ const MyLocation = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.paragraph}>{text}</Text>
-      <Text style={styles.paragraph}>{address}</Text> 
-      <Text style={styles.paragraph}>{weather}</Text>
-      {weatherIcon && <Image style={{ width: 70, height: 70 }} source={{ uri: weatherIcon }} />}
-      <Button onPress={getCurrentLocation}>Get my location</Button>
+      <View style={styles.location}>
+        <Text style={styles.paragraph}>{text}</Text>
+        <Text style={styles.paragraph}>{address}</Text>
+        <Text style={styles.paragraph}>{weather}</Text>
+        {weatherIcon && <Image style={{ width: 70, height: 70 }} source={{ uri: weatherIcon }} />}
+        <Button onPress={getCurrentLocation}>Get my location</Button>
+      </View>
+      {
+        <MapView
+          style={styles.map}
+          region={location ? {
+            latitude: location.latitude,
+            longitude: location.longitude
+          } : undefined
+          }
+        />
+      }
     </View>
   );
 }
@@ -61,11 +74,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     padding: 20,
   },
   paragraph: {
     fontSize: 18,
     textAlign: 'center',
+  },
+  location: {
+    flexBasis: 1
+  },
+  map: {
+    flexBasis: 1,
+    width: '100%',
   }
 });
