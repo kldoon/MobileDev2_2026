@@ -31,7 +31,8 @@
         "android.permission.READ_MEDIA_AUDIO",
         "android.permission.READ_MEDIA_IMAGES"
       ],
-      "package": "com.kldoon.doctorapp"
+      "package": "com.kldoon.doctorapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -62,6 +63,15 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/favicon.png",
+          "color": "#ffffff",
+          "sounds": [],
+          "enableBackgroundRemoteNotifications": true
         }
       ]
     ],

@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
 
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [channels, setChannels] = useState ([]);
+  const [channels, setChannels] = useState([]);
   const [notification, setNotification] = useState(undefined);
 
   useEffect(() => {
@@ -182,9 +182,10 @@ async function registerForPushNotificationsAsync() {
           projectId,
         })
       ).data;
-      console.log(token);
     } catch (e) {
       token = `${e}`;
+    } finally {
+      console.log(token);
     }
   } else {
     alert('Must use physical device for Push Notifications');
