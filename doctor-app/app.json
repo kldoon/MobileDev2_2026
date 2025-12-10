@@ -68,7 +68,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./local/assets/favicon.png",
+          "icon": "./assets/favicon.png",
           "color": "#ffffff",
           "sounds": [],
           "enableBackgroundRemoteNotifications": true
